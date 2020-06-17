@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useGetLatest, OptionInstanceProps, Option} from '.';
+import { useGetLatest} from '.';
 
-
-
-
-export function useMultiple(instance: any) {
+export function useMultiple(instance) {
 
   const getInstance = useGetLatest(instance);
 
-  const getOptions = (options: Array<any>): Array<OptionInstanceProps> => {
-    return options.map((option: any) => {
+  const getOptions = (options) => {
+    return options.map((option) => {
       return {
         option,
         getOptionProps: () => ({
@@ -23,15 +20,15 @@ export function useMultiple(instance: any) {
     })
   }
 
-  const [selected, setSelected] = useState<Array<any>>(getInstance().props.initialValue ? getInstance().props.initialValue : [])
+  const [selected, setSelected] = useState(getInstance().props.initialValue ? getInstance().props.initialValue : [])
   const [optionList, setOptionList] = useState(getOptions(getInstance().props.options));
 
   console.log(selected)
 
-  const selectOption = (option: any) => {
+  const selectOption = (option) => {
     if (option) {
       let newSelected;
-      let optionValue = getInstance().props.getOptionValue ? getInstance().props.getOptionValue(option) : (option as Option<any>).value;
+      let optionValue = getInstance().props.getOptionValue ? getInstance().props.getOptionValue(option) : (option).value;
       if (selected.includes(optionValue)) {
         newSelected = selected.slice();
         newSelected.splice(newSelected.indexOf(optionValue));
@@ -50,7 +47,7 @@ export function useMultiple(instance: any) {
     }
   }
 
-  getInstance().selectOption = (options: Array<any> | undefined) => {
+  getInstance().selectOption = (options) => {
     if (options) {
       setSelected([...options]);
     } else {

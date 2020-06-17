@@ -9,16 +9,16 @@ function App() {
     options,
     getRootProps,
     getListProps
-  } = useSelect<number>({
+  } = useSelect({
     options: [
       { label: 'test', value: 123 },
       { label: 'test2', value: 121 },
       { label: 'test3', value: 122 },
       { label: 'test4', value: 124 },
     ],
-    onChange: (value: number) => window.alert(value),
+    onChange: (value) => window.alert(value),
   }
-   , useMultiple
+    , useMultiple
   );
 
   return (
