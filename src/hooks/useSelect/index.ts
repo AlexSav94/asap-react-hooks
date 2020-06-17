@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export interface Option<V> {
   name: string;
@@ -25,7 +25,7 @@ export interface ListInstanceProps {
 }
 
 export interface UseSelectInstanceProps<V, T = any> {
-  selectedOption?: V;
+  value?: V;
   options: Array<OptionInstanceProps<T>>
   selectOption: (option: T | undefined) => void;
   getRootProps: () => RootInstanceProps;
@@ -39,8 +39,14 @@ export interface SelectProps<V, T = any> {
   onChange?: (value: V) => any;
 }
 
+export function useGetLatest(obj: any): any {
+  const ref = React.useRef()
+  ref.current = obj
 
-export const useSelect = <V, T = any>(props: SelectProps<V, T>): UseSelectInstanceProps<V, T> => {
+  return React.useCallback(() => ref.current, [])
+}
+
+export const useSelect = <V, T = any>(props: SelectProps<V, T>, ...hooks: any[]): UseSelectInstanceProps<V, T> => {
   const {
     initialValue,
     options,
@@ -48,54 +54,52 @@ export const useSelect = <V, T = any>(props: SelectProps<V, T>): UseSelectInstan
     onChange
   } = props;
 
+  const instanceRef = useRef({});
+  const getInstance = useGetLatest(instanceRef.current);
+
+  getInstance().props = props;
+
   const getOptions = (options: Array<T | Option<V>>): Array<OptionInstanceProps> => {
     return options.map((option: T | Option<V>) => {
-      let optionValue: V;
-      if (getOptionValue) {
-        optionValue = getOptionValue(option as T);
-      } else {
-        optionValue = (option as unknown as Option<V>).value;
-      }
       return {
         option,
         getOptionProps: () => ({
-          key: `${optionValue}`,
+          key: `${getOptionValue ? getOptionValue(option as T) : (option as unknown as Option<V>).value}`,
           role: 'option',
           onClick: () => {
-            if (selected === optionValue) {
-              return;
-            }
-            setSelected(optionValue)
-            if (onChange) {
-              onChange(optionValue);
-            }
+            getInstance().selectOption(option);
           }
         })
       }
     })
   }
 
-  const selectOption = (option: T | undefined) => {
-    setSelected(getOptionValue ? getOptionValue(option as T) : (option as unknown as Option<V>).value);
-    if (onChange) {
-      onChange(getOptionValue ? getOptionValue(option as T) : (option as unknown as Option<V>).value);
-    }
-  }
-
-  const getRootProps = (): RootInstanceProps => ({ role: 'combobox' });
-
-  const getListProps = (): ListInstanceProps => ({ role: 'listbox' });
-
   const [selected, setSelected] = useState(initialValue);
   const [optionList, setOptionList] = useState(getOptions(options));
 
-  useEffect(() => setOptionList(getOptions(options)), []);
+  getInstance().value = selected;
+  getInstance().options = optionList;
 
-  return ({
-    selectedOption: selected,
-    options: optionList,
-    selectOption,
-    getRootProps,
-    getListProps
-  });
+  getInstance().selectOption = (option: T | undefined) => {
+    let optionValue = getOptionValue ? getOptionValue(option as T) : (option as unknown as Option<V>).value;
+    if (selected === optionValue) {
+      return;
+    }
+    setSelected(optionValue);
+    if (onChange) {
+      onChange(optionValue);
+    }
+  }
+
+  getInstance().getRootProps = (): RootInstanceProps => ({ role: 'combobox' });
+
+  getInstance().getListProps = (): ListInstanceProps => ({ role: 'listbox' });
+
+  // useEffect(() => setOptionList(getOptions(options)), []);
+
+  getInstance().hooks = hooks.slice();
+
+  hooks.forEach((hook: any) => hook(getInstance()));
+
+  return getInstance();
 }
