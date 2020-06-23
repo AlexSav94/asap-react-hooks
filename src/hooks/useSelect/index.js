@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useReducer } from 'react';
 
 
 export function useGetLatest(obj) {
@@ -8,7 +8,21 @@ export function useGetLatest(obj) {
   return React.useCallback(() => ref.current, [])
 }
 
+function useSelectReducer(state, action) {
+  switch (action.type) {
+    case 'select':
+      return {...state, value: action.value};
+  }
+}  
+
+const defaultProps = {
+  initialValue: undefined,
+  options: [],
+  closeOnSelect: true
+}
+
 export const useSelect = (props, ...hooks) => {
+
   const {
     initialValue,
     options,
@@ -19,9 +33,17 @@ export const useSelect = (props, ...hooks) => {
   const instanceRef = useRef({});
   const getInstance = useGetLatest(instanceRef.current);
 
-  getInstance().props = props;
+  getInstance().props = {
+    ...defaultProps,
+    ...props
+  };
 
-  const getOptions = (options) => {
+  getInstance().hooks = hooks;
+
+  //allow hooks to register itselfs ASAP
+  getInstance().hooks.forEach((hook) => hook(getInstance()));
+
+  getInstance().getOptions = () => {
     return options.map(option => {
       return {
         option,
@@ -36,18 +58,13 @@ export const useSelect = (props, ...hooks) => {
     })
   }
 
-  const [selected, setSelected] = useState(initialValue);
-  const [optionList, setOptionList] = useState(getOptions(options));
-
-  getInstance().value = selected;
-  getInstance().options = optionList;
-
   getInstance().selectOption = (option) => {
+    let currentValue = state.value ? (getOptionValue ? getOptionValue(state.value) : state.value.value) : undefined;
     let optionValue = getOptionValue ? getOptionValue(option) : (option).value;
-    if (selected === optionValue) {
+    if (currentValue === optionValue) {
       return;
     }
-    setSelected(optionValue);
+    dispatch({type: 'select', value: option});
     if (onChange) {
       onChange(optionValue);
     }
@@ -57,11 +74,32 @@ export const useSelect = (props, ...hooks) => {
 
   getInstance().getListProps = () => ({ role: 'listbox' });
 
-  // useEffect(() => setOptionList(getOptions(options)), []);
+  const reducer = (state, action) => {
+    if (!action.type) {
+      throw new Error('Invalid Action')
+    }
+    console.log(state, action)
+    return [
+      useSelectReducer,
+      ...getInstance().hooks.reducers ? getInstance().hooks.reducers : []
+    ].reduce(
+      (s, handler) => handler(s, action, state, getInstance()) || s,
+      state
+    )
+  }
 
-  getInstance().hooks = hooks.slice();
+  const [state, dispatch] = useReducer(reducer, {value: initialValue});
 
-  hooks.forEach((hook) => hook(getInstance()));
+  console.log(state)
+
+  Object.assign(getInstance(), {state, dispatch});
+
+  getInstance().selectedValue = state.value ? (getOptionValue ? getOptionValue(state.value) : state.value.value) : undefined;
+
+  getInstance().selectedOption = state.value;
+
+  //allow hooks to update the final state of useSelect instance
+  getInstance().hooks.forEach((hook) => hook(getInstance()));
 
   return getInstance();
 }

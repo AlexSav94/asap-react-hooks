@@ -1,62 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { useGetLatest} from '.';
+import { useGetLatest } from '.';
 
-export function useMultiple(instance) {
+export default function useMultiple(instance) {
 
   const getInstance = useGetLatest(instance);
 
-  const getOptions = (options) => {
-    return options.map((option) => {
-      return {
-        option,
-        getOptionProps: () => ({
-          key: `${getInstance().props.getOptionValue ? getInstance().props.getOptionValue(option) : option.value}`,
-          role: 'option',
-          onClick: () => {
-            selectOption(option);
-          }
-        })
-      }
-    })
-  }
+  const {
+    state,
+    dispatch,
+    props
+  } = getInstance();
 
-  const [selected, setSelected] = useState(getInstance().props.initialValue ? getInstance().props.initialValue : [])
-  const [optionList, setOptionList] = useState(getOptions(getInstance().props.options));
+  // getInstance().selectOption = (value) => {
+  //   if (Array.isArray(value)) {
+  //     getInstance().dispatch({ type: 'select', value: [...value] });
+  //   } else if (value) {
+  //     let newSelected;
+  //     let optionValue = getInstance().props.getOptionValue ? getInstance().props.getOptionValue(value) : (value).value;
+  //     if (getInstance().state.value && getInstance().state.value.includes(optionValue)) {
+  //       newSelected = getInstance().state.value.slice();
+  //       newSelected.splice(newSelected.indexOf(optionValue), 1);
+  //     } else {
+  //       if (getInstance().state.value && Array.isArray(getInstance().state.value)) {
+  //         newSelected = [...getInstance().state.value, optionValue]
+  //       } else {
+  //         newSelected = [optionValue];
+  //       }
+  //     }
+  //     getInstance().dispatch({ type: 'select', value: newSelected });
+  //     if (getInstance().props.onChange) {
+  //       getInstance().props.onChange(newSelected);
+  //     }
+  //   } else {
+  //     getInstance().dispatch({ type: 'select', value: [] });
+  //     if (getInstance().props.onChange) {
+  //       getInstance().props.onChange([]);
+  //     }
+  //   }
+  // }
 
-  console.log(selected)
-
-  const selectOption = (option) => {
-    if (option) {
+  getInstance().selectOption = (value) => {
+    if (Array.isArray(value)) {
+      dispatch({ type: 'select', value: [...value] });
+    } else if (value) {
       let newSelected;
-      let optionValue = getInstance().props.getOptionValue ? getInstance().props.getOptionValue(option) : (option).value;
-      if (selected.includes(optionValue)) {
-        newSelected = selected.slice();
-        newSelected.splice(newSelected.indexOf(optionValue));
+      let optionValue = props.getOptionValue ? props.getOptionValue(value) : (value).value;
+      let values = getValue();
+      let options = getSelectedOption();
+      if (values && values.includes(optionValue)) {
+        newSelected = options.slice();
+        newSelected.splice(values.indexOf(optionValue), 1);
       } else {
-        newSelected = [...selected, optionValue];
+        if (options) {
+          newSelected = [...options, value]
+        } else {
+          newSelected = [value];
+        }
       }
-      setSelected(newSelected);
-      if (getInstance().props.onChange) {
-        getInstance().props.onChange(newSelected);
+      dispatch({ type: 'select', value: newSelected });
+      if (props.onChange) {
+        props.onChange(props.getOptionValue ? newSelected.map(option => props.getOptionValue(option)) : newSelected.map(option => option.value));
       }
     } else {
-      setSelected([]);
+      dispatch({ type: 'select', value: [] });
       if (getInstance().props.onChange) {
         getInstance().props.onChange([]);
       }
     }
   }
 
-  getInstance().selectOption = (options) => {
-    if (options) {
-      setSelected([...options]);
+  const getSelectedOption = () => {
+    if (state?.value) {
+      return state.value
     } else {
-      setSelected([]);
-      if (getInstance().props.onChange) {
-        getInstance().props.onChange([]);
+      return [];
+    }
+  };
+
+  const getValue = () => {
+    if (state?.value) {
+      if (props.getOptionValue) {
+        return state.value.map(option => props.getOptionValue(option))
+      } else {
+        return state.value.map(option => option.value)
       }
+    } else {
+      return [];
     }
   }
-  getInstance().value = selected;
-  getInstance().options = optionList;
-} 
+
+  getInstance().selectedValue = getValue();
+
+  getInstance().selectedOption = getSelectedOption();
+
+}
