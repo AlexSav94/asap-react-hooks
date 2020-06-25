@@ -94,7 +94,14 @@ function useInstance(instance) {
   }
 
   const getInputProps = () => {
+    let name;
+    if (getInstance().state?.value && !Array.isArray(getInstance().state.value)) {
+      name = getInstance().props.getOptionName ? getInstance().props.getOptionName(getInstance().state.value) : getInstance().state.value.name;
+    } else {
+      name = getInstance().state?.filter ? getInstance().state?.filter : '';
+    }
     return {
+      value: name,
       onFocus: () => {
         getInstance().open();
       }

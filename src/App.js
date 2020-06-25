@@ -8,6 +8,7 @@ import DropdownSelect from './DropdownSelect';
 import DualSelect from './DualSelect';
 import FilterDualSelect from './FilterDualSelect';
 import ComboBox from './ComboBox';
+import ComboBoxCustomFilter from './ComboBoxCustomFilter';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
       <DualSelect/>
       <FilterDualSelect/>
       <ComboBox/>
+      <ComboBoxCustomFilter/>
     </>
   );
 }

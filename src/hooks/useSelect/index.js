@@ -34,6 +34,7 @@ export const useSelect = (props, ...hooks) => {
   const {
     initialValue,
     options,
+    getOptionName,
     getOptionValue,
     onChange
   } = props;

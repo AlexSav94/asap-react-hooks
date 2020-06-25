@@ -32,7 +32,7 @@ function useInstance(instance) {
   const getOptions = getInstance().getOptions;
 
   getInstance().getInputProps = () => {
-    
+
     const inputProps = getInstance().hooks.getInputProps ? loopPropGetters(getInstance().hooks.getInputProps) : {};
 
     return {
@@ -53,7 +53,8 @@ function useInstance(instance) {
 
   getInstance().getOptions = () => {
     if (getInstance().state.filter) {
-      return getOptions().filter(option => option.option.label.startsWith(getInstance().state.filter))
+      return getOptions().filter(optionInstance => getInstance().props.getOptionName ?
+        getInstance().props.getOptionName(optionInstance.option) : optionInstance.option.name.startsWith(getInstance().state.filter))
     } else {
       return getOptions();
     }

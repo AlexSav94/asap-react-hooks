@@ -12,10 +12,10 @@ export default function DualSelect() {
     getListProps
   } = useSelect({
     options: [
-      { label: 'test', value: 123 },
-      { label: 'test2', value: 121 },
-      { label: 'test3', value: 122 },
-      { label: 'test4', value: 124 },
+      { name: 'test', value: 123 },
+      { name: 'test2', value: 121 },
+      { name: 'test3', value: 122 },
+      { name: 'test4', value: 124 },
     ],
     onChange: (value) => window.alert(value),
   }, useMultiple, useDual
@@ -27,7 +27,7 @@ export default function DualSelect() {
       <ul {...getListProps()}>
         {
           getOptions().map(optionInstance => {
-            return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.label}</span></li>
+            return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>
           })
         }
       </ul>
@@ -35,7 +35,7 @@ export default function DualSelect() {
       <ul {...getListProps()}>
         {
           getSelectedOptions().map(optionInstance => {
-            return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.label}</span></li>
+            return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>
           })
         }
       </ul>

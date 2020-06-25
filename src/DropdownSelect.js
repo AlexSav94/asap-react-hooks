@@ -15,10 +15,10 @@ export default function DropdownSelect() {
     getListProps
   } = useSelect({
     options: [
-      { label: 'test', value: 123 },
-      { label: 'test2', value: 121 },
-      { label: 'test3', value: 122 },
-      { label: 'test4', value: 124 },
+      { name: 'test', value: 123 },
+      { name: 'test2', value: 121 },
+      { name: 'test3', value: 122 },
+      { name: 'test4', value: 124 },
     ],
     onChange: (value) => window.alert(value)
   }, useDropdown);
@@ -26,14 +26,14 @@ export default function DropdownSelect() {
   return (
     <div {...getRootProps()} className='select'>
       <h2>Dropdown Selection</h2>
-      <span>Choose option: {selectedOption?.label} <button {...getButtonProps()}>Open</button></span>
+      <span>Choose option: {selectedOption?.name} <button {...getButtonProps()}>Open</button></span>
       <ul {...getListProps()} style={isOpen ? { display: "block" } : { display: "none" }}>
         {
           getOptions().map(optionInstance => {
             if (selectedValue === optionInstance.option.value) {
-              return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.label}</span></li>
+              return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.name}</span></li>
             } else {
-              return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.label}</span></li>
+              return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>
             }
           })
         }
