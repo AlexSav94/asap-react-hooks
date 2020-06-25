@@ -4,6 +4,14 @@ export default function useDual(instance) {
 
   const getInstance = useGetLatest(instance);
 
+  getInstance().hooks.useInstance = getInstance().hooks.useInstance ? [...getInstance().hooks.useInstance, useInstance] : [useInstance];
+
+}
+
+function useInstance(instance) {
+
+  const getInstance = useGetLatest(instance);
+  
   const {
     selectedValue,
     props,

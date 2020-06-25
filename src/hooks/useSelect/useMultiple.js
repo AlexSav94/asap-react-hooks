@@ -5,39 +5,19 @@ export default function useMultiple(instance) {
 
   const getInstance = useGetLatest(instance);
 
+  getInstance().hooks.useInstance = getInstance().hooks.useInstance ? [...getInstance().hooks.useInstance, useInstance] : [useInstance];
+
+}
+
+function useInstance(instance) {
+
+  const getInstance = useGetLatest(instance);
+
   const {
     state,
     dispatch,
     props
   } = getInstance();
-
-  // getInstance().selectOption = (value) => {
-  //   if (Array.isArray(value)) {
-  //     getInstance().dispatch({ type: 'select', value: [...value] });
-  //   } else if (value) {
-  //     let newSelected;
-  //     let optionValue = getInstance().props.getOptionValue ? getInstance().props.getOptionValue(value) : (value).value;
-  //     if (getInstance().state.value && getInstance().state.value.includes(optionValue)) {
-  //       newSelected = getInstance().state.value.slice();
-  //       newSelected.splice(newSelected.indexOf(optionValue), 1);
-  //     } else {
-  //       if (getInstance().state.value && Array.isArray(getInstance().state.value)) {
-  //         newSelected = [...getInstance().state.value, optionValue]
-  //       } else {
-  //         newSelected = [optionValue];
-  //       }
-  //     }
-  //     getInstance().dispatch({ type: 'select', value: newSelected });
-  //     if (getInstance().props.onChange) {
-  //       getInstance().props.onChange(newSelected);
-  //     }
-  //   } else {
-  //     getInstance().dispatch({ type: 'select', value: [] });
-  //     if (getInstance().props.onChange) {
-  //       getInstance().props.onChange([]);
-  //     }
-  //   }
-  // }
 
   getInstance().selectOption = (value) => {
     if (Array.isArray(value)) {

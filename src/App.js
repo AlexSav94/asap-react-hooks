@@ -7,17 +7,19 @@ import FilterSelect from './FilterSelect';
 import DropdownSelect from './DropdownSelect';
 import DualSelect from './DualSelect';
 import FilterDualSelect from './FilterDualSelect';
+import ComboBox from './ComboBox';
 
 function App() {
 
   return (
     <>
-      {/* <SimpleSelect/>
+      <SimpleSelect/>
       <MultipleSelect/>
-      <FilterSelect/> */}
+      <FilterSelect/>
       <DropdownSelect/>
-      {/* <DualSelect/>
-      <FilterDualSelect/> */}
+      <DualSelect/>
+      <FilterDualSelect/>
+      <ComboBox/>
     </>
   );
 }

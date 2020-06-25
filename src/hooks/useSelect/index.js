@@ -8,12 +8,20 @@ export function useGetLatest(obj) {
   return React.useCallback(() => ref.current, [])
 }
 
+export function loopPropGetters(propGetters) {
+  let result = {};
+  propGetters.forEach(propGetter => {
+    result = {...result, ...propGetter()}
+  })
+  return result
+}
+
 function useSelectReducer(state, action) {
   switch (action.type) {
     case 'select':
-      return {...state, value: action.value};
+      return { ...state, value: action.value };
   }
-}  
+}
 
 const defaultProps = {
   initialValue: undefined,
@@ -59,26 +67,45 @@ export const useSelect = (props, ...hooks) => {
   }
 
   getInstance().selectOption = (option) => {
-    let currentValue = state.value ? (getOptionValue ? getOptionValue(state.value) : state.value.value) : undefined;
-    let optionValue = getOptionValue ? getOptionValue(option) : (option).value;
-    if (currentValue === optionValue) {
-      return;
-    }
-    dispatch({type: 'select', value: option});
-    if (onChange) {
-      onChange(optionValue);
+    if (option) {
+      let currentValue = state.value ? (getOptionValue ? getOptionValue(state.value) : state.value.value) : undefined;
+      let optionValue = getOptionValue ? getOptionValue(option) : (option).value;
+      if (currentValue === optionValue) {
+        return;
+      }
+      dispatch({ type: 'select', value: option });
+      if (onChange) {
+        onChange(optionValue);
+      }
+    } else {
+      dispatch({ type: 'select', value: undefined });
     }
   }
 
-  getInstance().getRootProps = () => ({ role: 'combobox' });
+  getInstance().getRootProps = () => {
+    
+    const rootProps = getInstance().hooks.getRootProps ? loopPropGetters(getInstance().hooks.getRootProps) : {};
 
-  getInstance().getListProps = () => ({ role: 'listbox' });
+    return {
+      role: 'combobox',
+      ...rootProps
+    }
+  }
+
+  getInstance().getListProps = () => {
+
+    const listProps = getInstance().hooks.getListProps ? loopPropGetters(getInstance().hooks.getListProps) : {};
+
+    return {
+      role: 'listbox',
+      ...listProps
+    }
+  }
 
   const reducer = (state, action) => {
     if (!action.type) {
       throw new Error('Invalid Action')
     }
-    console.log(state, action)
     return [
       useSelectReducer,
       ...getInstance().hooks.reducers ? getInstance().hooks.reducers : []
@@ -88,18 +115,18 @@ export const useSelect = (props, ...hooks) => {
     )
   }
 
-  const [state, dispatch] = useReducer(reducer, {value: initialValue});
+  const [state, dispatch] = useReducer(reducer, { value: initialValue });
 
-  console.log(state)
-
-  Object.assign(getInstance(), {state, dispatch});
+  Object.assign(getInstance(), { state, dispatch });
 
   getInstance().selectedValue = state.value ? (getOptionValue ? getOptionValue(state.value) : state.value.value) : undefined;
 
   getInstance().selectedOption = state.value;
 
   //allow hooks to update the final state of useSelect instance
-  getInstance().hooks.forEach((hook) => hook(getInstance()));
+  if (hooks.useInstance) {
+    getInstance().hooks.useInstance.forEach((hook) => hook(getInstance()));
+  }
 
   return getInstance();
 }

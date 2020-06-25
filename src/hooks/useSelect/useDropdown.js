@@ -18,18 +18,19 @@ export default function useDropdown(instance) {
 
   getInstance().hooks.reducers = getInstance().hooks.reducers ? [...getInstance().hooks.reducers, reducer] : [reducer];
 
+  getInstance().hooks.useInstance = getInstance().hooks.useInstance ? [...getInstance().hooks.useInstance, useInstance] : [useInstance];
+}
+
+function useInstance(instance) {
+
+  const getInstance = useGetLatest(instance);
+
   const toggle = () => {
     getInstance().dispatch({
       type: 'toggle'
     })
     getInstance().isOpen = !getInstance().state.isOpen;
   }
-
-  getInstance().getButtonProps = () => ({
-    onClick: () => {
-      toggle();
-    }
-  });
 
   getInstance().open = () => {
     getInstance().dispatch({
@@ -67,5 +68,42 @@ export default function useDropdown(instance) {
       }
       return optionInstance;
     });
+  }
+
+  getInstance().getButtonProps = () => ({
+    onClick: () => {
+      toggle();
+    }
+  });;
+
+  const getRootProps = () => {
+    return {
+      tabIndex: 1,
+      onBlur: e => {
+        if (getInstance().state?.isOpen && e.relatedTarget === null) {
+          getInstance().close();
+        }
+      }
+    }
+  }
+
+  if (getInstance().hooks.getRootProps) {
+    getInstance().hooks.getRootProps.push(getRootProps)
+  } else {
+    getInstance().hooks.getRootProps = [getRootProps];
+  }
+
+  const getInputProps = () => {
+    return {
+      onFocus: () => {
+        getInstance().open();
+      }
+    }
+  }
+
+  if (getInstance().hooks.getInputProps) {
+    getInstance().hooks.getInputProps.push(getInputProps)
+  } else {
+    getInstance().hooks.getInputProps = [getInputProps];
   }
 }
