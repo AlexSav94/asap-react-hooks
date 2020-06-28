@@ -5,7 +5,7 @@ import useMultiple from './hooks/useSelect/useMultiple';
 export default function MultipleSelect() {
 
   const {
-    selectedValue,
+    getSelectedValue,
     getOptions,
     getRootProps,
     getListProps
@@ -26,7 +26,8 @@ export default function MultipleSelect() {
       <ul {...getListProps()}>
         {
           getOptions().map(optionInstance => {
-            if (selectedValue && selectedValue.includes(optionInstance.option.value)) {
+            const value = getSelectedValue();
+            if (value && value.includes(optionInstance.option.value)) {
               return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.name}</span></li>
             } else {
               return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>

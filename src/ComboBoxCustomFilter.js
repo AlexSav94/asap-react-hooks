@@ -19,8 +19,8 @@ export default function ComboBoxCustomFilter() {
   const [options, setOptions] = useState([]);
 
   const {
-    selectedValue,
-    selectedOption,
+    getSelectedValue,
+    getSelectedOption,
     isOpen,
     open,
     close,
@@ -33,6 +33,9 @@ export default function ComboBoxCustomFilter() {
     options: options,
     onChange: (value) => window.alert(value)
   }, useDropdown);
+
+  const selectedValue = getSelectedValue();
+  const selectedOption = getSelectedOption();
 
   useEffect(() => {
     getFilteredOptions(filter).then(options => setOptions(options))

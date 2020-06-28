@@ -5,8 +5,8 @@ import useDropdown from './hooks/useSelect/useDropdown';
 export default function DropdownSelect() {
 
   const {
-    selectedValue,
-    selectedOption,
+    getSelectedValue,
+    getSelectedOption,
     isOpen,
     close,
     getOptions,
@@ -26,11 +26,12 @@ export default function DropdownSelect() {
   return (
     <div {...getRootProps()} className='select'>
       <h2>Dropdown Selection</h2>
-      <span>Choose option: {selectedOption?.name} <button {...getButtonProps()}>Open</button></span>
+      <span>Choose option: {getSelectedOption()?.name} <button {...getButtonProps()}>Open</button></span>
       <ul {...getListProps()} style={isOpen ? { display: "block" } : { display: "none" }}>
         {
           getOptions().map(optionInstance => {
-            if (selectedValue === optionInstance.option.value) {
+            const value = getSelectedValue()
+            if (value === optionInstance.option.value) {
               return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.name}</span></li>
             } else {
               return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>

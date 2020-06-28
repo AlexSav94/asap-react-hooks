@@ -6,8 +6,8 @@ import useFilter from './hooks/useSelect/useFilter';
 export default function ComboBox() {
 
   const {
-    selectedValue,
-    selectedOption,
+    getSelectedValue,
+    getSelectedOption,
     isOpen,
     open,
     close,
@@ -26,6 +26,9 @@ export default function ComboBox() {
     onChange: (value) => window.alert(value),
     invalidateOnFilter: true
   }, useDropdown, useFilter);
+
+  const selectedValue = getSelectedValue();
+  const selectedOption = getSelectedOption();
 
   return (
     <div className='select'>

@@ -4,7 +4,7 @@ import { useSelect } from './hooks/useSelect';
 export default function SimpleSelect() {
 
   const {
-    selectedValue,
+    getSelectedValue,
     getOptions,
     getRootProps,
     getListProps
@@ -25,7 +25,7 @@ export default function SimpleSelect() {
       <ul {...getListProps()}>
         {
           getOptions().map(optionInstance => {
-            if (selectedValue === optionInstance.option.value) {
+            if (getSelectedValue() === optionInstance.option.value) {
               return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.name}</span></li>
             } else {
               return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>

@@ -15,7 +15,7 @@ function App() {
   return (
     <>
       <SimpleSelect/>
-      <MultipleSelect/>
+       <MultipleSelect/>
       <FilterSelect/>
       <DropdownSelect/>
       <DualSelect/>

@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { useGetLatest } from '.';
+import { useGetLatest } from ".";
 
 export default function useMultiple(instance) {
 
-  const getInstance = useGetLatest(instance);
-
-  getInstance().hooks.useInstance = getInstance().hooks.useInstance ? [...getInstance().hooks.useInstance, useInstance] : [useInstance];
+  instance.hooks.useInstance = instance.hooks.useInstance ? [...instance.hooks.useInstance, useInstance] : [useInstance];
 
 }
 
 function useInstance(instance) {
 
-  const getInstance = useGetLatest(instance);
-
   const {
     state,
     dispatch,
     props
-  } = getInstance();
+  } = instance;
 
-  getInstance().selectOption = (value) => {
+  instance.selectOption = (value) => {
+
+    const {
+      dispatch,
+      props
+    } = instance;
+
     if (Array.isArray(value)) {
       dispatch({ type: 'select', value: [...value] });
     } else if (value) {
@@ -43,13 +44,17 @@ function useInstance(instance) {
       }
     } else {
       dispatch({ type: 'select', value: [] });
-      if (getInstance().props.onChange) {
-        getInstance().props.onChange([]);
+      if (instance.props.onChange) {
+        instance.props.onChange([]);
       }
     }
   }
 
   const getSelectedOption = () => {
+    const {
+      state
+    } = instance;
+
     if (state?.value) {
       return state.value
     } else {
@@ -58,6 +63,11 @@ function useInstance(instance) {
   };
 
   const getValue = () => {
+    const {
+      state,
+      props
+    } = instance;
+
     if (state?.value) {
       if (props.getOptionValue) {
         return state.value.map(option => props.getOptionValue(option))
@@ -69,8 +79,8 @@ function useInstance(instance) {
     }
   }
 
-  getInstance().selectedValue = getValue();
+  instance.getSelectedValue = () => getValue();
 
-  getInstance().selectedOption = getSelectedOption();
+  instance.getSelectedOption = () => getSelectedOption();
 
 }

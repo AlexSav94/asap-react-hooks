@@ -1,24 +1,22 @@
-import { useGetLatest } from '.';
 
 export default function useDual(instance) {
 
-  const getInstance = useGetLatest(instance);
-
-  getInstance().hooks.useInstance = getInstance().hooks.useInstance ? [...getInstance().hooks.useInstance, useInstance] : [useInstance];
+  instance.hooks.useInstance = instance.hooks.useInstance ? [...instance.hooks.useInstance, useInstance] : [useInstance];
 
 }
 
 function useInstance(instance) {
 
-  const getInstance = useGetLatest(instance);
-  
-  const {
-    selectedValue,
-    props,
-    getOptions
-  } = getInstance();
+  const getOptions = instance.getOptions;
 
-  getInstance().getOptions = () => {
+  instance.getOptions = () => {
+    const {
+      getSelectedValue,
+      props
+    } = instance;
+
+    const selectedValue = getSelectedValue();
+    
     if (selectedValue && Array.isArray(selectedValue)) {
       return getOptions().filter(optionInstance => !selectedValue.includes(props.getOptionValue ? props.getOptionValue(optionInstance.option) : optionInstance.option.value))
     } else {
@@ -26,7 +24,14 @@ function useInstance(instance) {
     }
   }
 
-  getInstance().getSelectedOptions = () => {
+  instance.getSelectedOptions = () => {
+    const {
+      getSelectedValue,
+      props
+    } = instance;
+
+    const selectedValue = getSelectedValue();
+
     if (selectedValue && Array.isArray(selectedValue)) {
       return props.options.filter(option => selectedValue.includes(props.getOptionValue ? props.getOptionValue(option) : option.value)).map(option => {
         return {
@@ -35,11 +40,13 @@ function useInstance(instance) {
             key: `${props.getOptionValue ? props.getOptionValue(option) : (option).value}`,
             role: 'option',
             onClick: () => {
-              getInstance().selectOption(option);
+              instance.selectOption(option);
             }
           })
         }
       })
+    } else {
+      return [];
     }
   }
 

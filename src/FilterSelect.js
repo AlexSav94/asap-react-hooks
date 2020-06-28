@@ -6,7 +6,7 @@ import useFilter from './hooks/useSelect/useFilter';
 export default function FilterSelect() {
 
   const {
-    selectedValue,
+    getSelectedValue,
     getOptions,
     getInputProps,
     getRootProps,
@@ -29,7 +29,8 @@ export default function FilterSelect() {
       <ul {...getListProps()}>
         {
           getOptions().map(optionInstance => {
-            if (selectedValue && selectedValue.includes(optionInstance.option.value)) {
+            const value = getSelectedValue();
+            if (value && value.includes(optionInstance.option.value)) {
               return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.name}</span></li>
             } else {
               return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>
