@@ -1,11 +1,14 @@
+import { UseSelectInstance, OptionInstance } from ".";
 
-export default function useDual(instance) {
-
-  instance.hooks.useInstance = instance.hooks.useInstance ? [...instance.hooks.useInstance, useInstance] : [useInstance];
-
+export interface UseDualInstance extends UseSelectInstance {
+  getSelectedOptions: () => OptionInstance[];
 }
 
-function useInstance(instance) {
+export default function useDual(instance: UseSelectInstance) {
+  instance.hooks.useInstance = instance.hooks.useInstance ? [...instance.hooks.useInstance, useInstance] : [useInstance];
+}
+
+function useInstance(instance: UseDualInstance) {
 
   const getOptions = instance.getOptions;
 

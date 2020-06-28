@@ -1,12 +1,16 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelect } from './hooks/useSelect';
-import useMultiple from './hooks/useSelect/useMultiple';
+import useDropdown, { UseDropdownInstance } from './hooks/useSelect/useDropdown';
 
-export default function MultipleSelect() {
+export default function DropdownSelect() {
 
   const {
     getSelectedValue,
+    getSelectedOption,
+    isOpen,
+    close,
     getOptions,
+    getButtonProps,
     getRootProps,
     getListProps
   } = useSelect({
@@ -16,18 +20,18 @@ export default function MultipleSelect() {
       { name: 'test3', value: 122 },
       { name: 'test4', value: 124 },
     ],
-    onChange: (value) => window.alert(value),
-  }, useMultiple
-  );
+    onChange: (value) => window.alert(value)
+  }, useDropdown) as UseDropdownInstance;
 
   return (
     <div {...getRootProps()} className='select'>
-      <h2>Multiple Selection</h2>
-      <ul {...getListProps()}>
+      <h2>Dropdown Selection</h2>
+      <span>Choose option: {getSelectedOption()?.name} <button {...getButtonProps()}>Open</button></span>
+      <ul {...getListProps()} style={isOpen ? { display: "block" } : { display: "none" }}>
         {
           getOptions().map(optionInstance => {
-            const value = getSelectedValue();
-            if (value && value.includes(optionInstance.option.value)) {
+            const value = getSelectedValue()
+            if (value === optionInstance.option.value) {
               return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.name}</span></li>
             } else {
               return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>

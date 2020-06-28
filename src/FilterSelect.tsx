@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { useSelect } from './hooks/useSelect';
 import useMultiple from './hooks/useSelect/useMultiple';
-import useDual from './hooks/useSelect/useDual';
-import useFilter from './hooks/useSelect/useFilter';
+import useFilter, { UseFilterInstance } from './hooks/useSelect/useFilter';
 
-export default function FilterDualSelect() {
+export default function FilterSelect() {
 
   const {
+    getSelectedValue,
     getOptions,
-    getSelectedOptions,
     getInputProps,
     getRootProps,
     getListProps
@@ -20,25 +19,22 @@ export default function FilterDualSelect() {
       { name: 'test4', value: 124 },
     ],
     onChange: (value) => window.alert(value),
-  }, useMultiple, useDual, useFilter
-  );
+  }, useFilter, useMultiple, 
+  ) as UseFilterInstance;
 
   return (
     <div {...getRootProps()} className='select'>
-      <h2>Filter Dual Selection</h2>
+      <h2>Filter Selection</h2>
       <input type='text' {...getInputProps()}/>
       <ul {...getListProps()}>
         {
           getOptions().map(optionInstance => {
-            return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>
-          })
-        }
-      </ul>
-      <span>Selected:</span>
-      <ul {...getListProps()}>
-        {
-          getSelectedOptions().map(optionInstance => {
-            return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>
+            const value = getSelectedValue();
+            if (value && value.includes(optionInstance.option.value)) {
+              return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.name}</span></li>
+            } else {
+              return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>
+            }
           })
         }
       </ul>

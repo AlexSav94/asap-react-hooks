@@ -1,4 +1,4 @@
-import React, { useRef, useReducer } from 'react';
+import React, { useRef, useReducer, useEffect } from 'react';
 
 export interface UseSelectProps {
   initialValue?: any;
@@ -6,7 +6,8 @@ export interface UseSelectProps {
   getOptionName?: (option: any) => string;
   getOptionValue?: (option: any) => string;
   onChange?: (value: any) => any;
-  closeOnSelect: boolean
+  closeOnSelect?: boolean;
+  invalidateOnFilter?: boolean
 }
 
 export interface RootProps {
@@ -19,6 +20,7 @@ export interface ListProps {
 
 export interface OptionProps {
   role: string;
+  key: string;
   onClick: () => void;
 }
 
@@ -50,9 +52,8 @@ export type Action =
   | { type: 'select', value: any }
 
 
-export function useGetLatest(obj?: UseSelectInstance) {
-  const ref = React.useRef<UseSelectInstance>()
-  ref.current = obj
+export function useGetLatest(obj: UseSelectInstance) {
+  const ref = React.useRef<UseSelectInstance>(obj)
 
   return React.useCallback(() => ref.current, [])
 }
@@ -82,7 +83,6 @@ export const useSelect = (props: UseSelectProps, ...hooks: any) => {
 
   const {
     initialValue,
-    options,
     getOptionValue,
     onChange
   } = props;
@@ -94,14 +94,14 @@ export const useSelect = (props: UseSelectProps, ...hooks: any) => {
     },
     hooks,
     getOptions: () => {
-      return options.map(option => {
+      return getInstance().props.options.map(option => {
         return {
           option,
           getOptionProps: () => ({
             key: `${getOptionValue ? getOptionValue(option) : (option).value}`,
             role: 'option',
             onClick: () => {
-              getInstance()?.selectOption(option);
+              getInstance().selectOption(option);
             }
           })
         }
@@ -123,25 +123,30 @@ export const useSelect = (props: UseSelectProps, ...hooks: any) => {
       }
     },
     getRootProps: () => {
-      const rootProps: any = getInstance()?.hooks.getRootProps ? loopPropGetters(getInstance()?.hooks.getRootProps) : {};
+      const rootProps: any = getInstance().hooks.getRootProps ? loopPropGetters(getInstance().hooks.getRootProps) : {};
       return {
         role: 'combobox',
         ...rootProps
       }
     },
     getListProps: () => {
-      const listProps: any = getInstance()?.hooks.getListProps ? loopPropGetters(getInstance()?.hooks.getListProps) : {};
+      const listProps: any = getInstance().hooks.getListProps ? loopPropGetters(getInstance().hooks.getListProps) : {};
       return {
         role: 'listbox',
         ...listProps
       }
     },
     getSelectedValue: () => {
-      return getInstance()?.state?.value ? (getOptionValue ? getOptionValue(getInstance()?.state?.value) : getInstance()?.state?.value.value) : undefined
+      return getInstance().state?.value ? (getOptionValue ? getOptionValue(getInstance().state?.value) : getInstance().state?.value.value) : undefined
     },
-    getSelectedOption: () => state.value
+    getSelectedOption: () => getInstance().state?.value
   });
+
   const getInstance = useGetLatest(instanceRef.current);
+  
+  Object.assign(getInstance(), { props: {
+    ...defaultProps, ...props
+  } });
 
   //allow hooks to register itselfs ASAP
   instanceRef.current.hooks.forEach((hook: any) => hook(instanceRef.current));
@@ -152,7 +157,7 @@ export const useSelect = (props: UseSelectProps, ...hooks: any) => {
     }
     return [
       useSelectReducer,
-      ...getInstance()?.hooks.reducers ? getInstance()?.hooks.reducers : []
+      ...getInstance().hooks.reducers ? getInstance().hooks.reducers : []
     ].reduce(
       (s, handler) => handler(s, action, state, getInstance()) || s,
       state

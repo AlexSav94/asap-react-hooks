@@ -1,5 +1,24 @@
+import { UseSelectState, Action, UseSelectInstance } from ".";
+import { UseFilterState } from "./useFilter";
 
-function reducer(state, action) {
+export interface UseDropdownState extends UseFilterState {
+  isOpen: boolean;
+}
+
+export interface UseDropdownInstance extends UseSelectInstance {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+  getButtonProps: () => { onClick: () => void; };
+
+}
+
+export type DropdownAction = Action
+  | { type: 'open' }
+  | { type: 'close' }
+  | { type: 'toggle' }
+
+function reducer(state: UseDropdownState, action: DropdownAction) {
   switch (action.type) {
     case 'open':
       return { ...state, isOpen: true }
@@ -10,50 +29,62 @@ function reducer(state, action) {
   }
 }
 
-export default function useDropdown(instance) {
+export default function useDropdown(instance: UseSelectInstance) {
 
   instance.hooks.reducers = instance.hooks.reducers ? [...instance.hooks.reducers, reducer] : [reducer];
 
   instance.hooks.useInstance = instance.hooks.useInstance ? [...instance.hooks.useInstance, useInstance] : [useInstance];
 }
 
-function useInstance(instance) {
+function useInstance(instance: UseDropdownInstance) {
 
   const toggle = () => {
-    instance.dispatch({
-      type: 'toggle'
-    })
-    instance.isOpen = !instance.state.isOpen;
+    if (instance.dispatch) {
+      instance.dispatch({
+        type: 'toggle'
+      })
+    }
+    instance.isOpen = !(instance.state as unknown as UseDropdownState).isOpen;
   }
 
   instance.open = () => {
-    instance.dispatch({
-      type: 'open'
-    })
+    if (instance.dispatch) {
+      instance.dispatch({
+        type: 'open'
+      })
+    }
     instance.isOpen = true;
   }
 
   instance.close = () => {
-    instance.dispatch({
-      type: 'close'
-    })
+    if (instance.dispatch) {
+      instance.dispatch({
+        type: 'close'
+      })
+    }
     instance.isOpen = false;
   }
 
   const getOptions = instance.getOptions;
 
   instance.getOptions = () => {
+
+    const {
+      props,
+      close
+    } = instance;
+    
     return getOptions().map(optionInstance => {
       const optionProps = optionInstance.getOptionProps();
       optionInstance.getOptionProps = () => {
         let option = optionInstance.option
         return {
-          key: `${instance.props.getOptionValue ? instance.props.getOptionValue(option) : option.value}`,
+          key: `${props.getOptionValue ? props.getOptionValue(option) : option.value}`,
           role: 'option',
           onClick: () => {
-            if (instance.props.closeOnSelect) {
+            if (props.closeOnSelect) {
               optionProps.onClick();
-              instance.close();
+              close();
             } else {
               optionProps.onClick();
             }
@@ -71,11 +102,17 @@ function useInstance(instance) {
   });;
 
   const getRootProps = () => {
+
+    const {
+      state,
+      close
+    } = instance;
+
     return {
       tabIndex: 1,
-      onBlur: e => {
-        if (instance.state?.isOpen && e.relatedTarget === null) {
-          instance.close();
+      onBlur: (e: React.FocusEvent<any>) => {
+        if ((state as unknown as UseDropdownState).isOpen && e.relatedTarget === null) {
+          close();
         }
       }
     }
@@ -88,16 +125,23 @@ function useInstance(instance) {
   }
 
   const getInputProps = () => {
+    
+    const {
+      props,
+      state,
+      open
+    } = instance;
+
     let name;
-    if (instance.state?.value && !Array.isArray(instance.state.value)) {
-      name = instance.props.getOptionName ? instance.props.getOptionName(instance.state.value) : instance.state.value.name;
+    if (state?.value && !Array.isArray(state.value)) {
+      name = props.getOptionName ? props.getOptionName(state.value) : state.value.name;
     } else {
-      name = instance.state?.filter ? instance.state?.filter : '';
+      name = (state as UseDropdownState).filter ? (state as UseDropdownState).filter : '';
     }
     return {
       value: name,
       onFocus: () => {
-        instance.open();
+        open();
       }
     }
   }

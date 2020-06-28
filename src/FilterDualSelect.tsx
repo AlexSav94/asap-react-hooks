@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react';
 import { useSelect } from './hooks/useSelect';
 import useMultiple from './hooks/useSelect/useMultiple';
-import useDual from './hooks/useSelect/useDual';
+import useDual, { UseDualInstance } from './hooks/useSelect/useDual';
+import useFilter, { UseFilterInstance } from './hooks/useSelect/useFilter';
+import { UseDropdownInstance } from './hooks/useSelect/useDropdown';
 
-export default function DualSelect() {
+export default function FilterDualSelect() {
 
   const {
     getOptions,
     getSelectedOptions,
+    getInputProps,
     getRootProps,
     getListProps
   } = useSelect({
@@ -18,12 +21,13 @@ export default function DualSelect() {
       { name: 'test4', value: 124 },
     ],
     onChange: (value) => window.alert(value),
-  }, useMultiple, useDual
-  );
+  }, useMultiple, useDual, useFilter
+  ) as UseDropdownInstance & UseFilterInstance & UseDualInstance;
 
   return (
     <div {...getRootProps()} className='select'>
-      <h2>Dual Selection</h2>
+      <h2>Filter Dual Selection</h2>
+      <input type='text' {...getInputProps()}/>
       <ul {...getListProps()}>
         {
           getOptions().map(optionInstance => {

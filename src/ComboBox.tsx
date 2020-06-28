@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useSelect } from './hooks/useSelect';
-import useDropdown from './hooks/useSelect/useDropdown';
-import useFilter from './hooks/useSelect/useFilter';
+import useDropdown, { UseDropdownInstance } from './hooks/useSelect/useDropdown';
+import useFilter, { UseFilterInstance } from './hooks/useSelect/useFilter';
 
 export default function ComboBox() {
 
@@ -9,8 +9,6 @@ export default function ComboBox() {
     getSelectedValue,
     getSelectedOption,
     isOpen,
-    open,
-    close,
     getOptions,
     getInputProps,
     getButtonProps,
@@ -25,7 +23,7 @@ export default function ComboBox() {
     ],
     onChange: (value) => window.alert(value),
     invalidateOnFilter: true
-  }, useDropdown, useFilter);
+  }, useDropdown, useFilter) as UseDropdownInstance & UseFilterInstance;
 
   const selectedValue = getSelectedValue();
   const selectedOption = getSelectedOption();
