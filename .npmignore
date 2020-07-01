@@ -3,3 +3,5 @@ src
 node_modules
 examples
 webpack.config.js
+yarn.lock
+package-lock.json

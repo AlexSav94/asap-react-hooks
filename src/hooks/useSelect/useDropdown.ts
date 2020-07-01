@@ -1,4 +1,4 @@
-import { UseSelectState, Action, UseSelectInstance } from ".";
+import { Action, UseSelectInstance } from ".";
 import { UseFilterState } from "./useFilter";
 
 export interface UseDropdownState extends UseFilterState {

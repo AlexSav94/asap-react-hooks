@@ -1,5 +1,5 @@
 {
-  "name": "react-ts-template",
+  "name": "asap-react-hooks-examples",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -13,8 +13,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "asap-react-hooks": "^0.1.0",
-    "typescript": "latest"
+    "asap-react-hooks": "latest",
+    "typescript": "3.9.5"
   },
   "scripts": {
     "start": "react-scripts start",

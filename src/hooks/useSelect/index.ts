@@ -1,4 +1,4 @@
-import React, { useRef, useReducer, useEffect } from 'react';
+import React, { useRef, useReducer } from 'react';
 
 export interface UseSelectProps {
   initialValue?: any;

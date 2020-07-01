@@ -1,29 +1,28 @@
 {
   "name": "asap-react-hooks",
-  "version": "0.1.0",
-  "main": "dist/bundle.js",
+  "version": "0.1.1",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "devDependencies": {
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "path": "^0.12.7",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
     "rimraf": "^3.0.2",
     "source-map-loader": "^1.0.0",
-    "ts-loader": "^7.0.5",
+    "awesome-typescript-loader": "^5.2.1",
     "typescript": "^3.9.5",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
   },
   "peerDependencies": {
-    "react": ">=16.8.0"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "buildts": "tsc",
-    "clean": "rimraf dist",
-    "clean-and-build": "npm run clean && npm run build"
+    "build": "npm run clean && webpack --config webpack.config.js --mode production",
+    "clean": "rimraf dist"
   },
   "eslintConfig": {
     "extends": "react-app"
