@@ -30,7 +30,7 @@ function reducer(state: UseFilterState, action: UseFilterAction) {
   }
 }
 
-export default function useFilter(instance: UseSelectInstance) {
+export function useFilter(instance: UseSelectInstance) {
   instance.hooks.reducers = instance.hooks.reducers ? [...instance.hooks.reducers, reducer] : [reducer];
   instance.hooks.useInstance = instance.hooks.useInstance ? [...instance.hooks.useInstance, useInstance] : [useInstance];
 }

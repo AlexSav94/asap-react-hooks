@@ -1,9 +1,5 @@
-import React, { useEffect } from 'react';
-import { useSelect } from './hooks/useSelect';
-import useMultiple from './hooks/useSelect/useMultiple';
-import useDual, { UseDualInstance } from './hooks/useSelect/useDual';
-import useFilter, { UseFilterInstance } from './hooks/useSelect/useFilter';
-import { UseDropdownInstance } from './hooks/useSelect/useDropdown';
+import React from 'react';
+import { useSelect, useMultiple, useDual, useFilter, UseDropdownInstance, UseDualInstance, UseFilterInstance } from 'asap-react-hooks';
 
 export default function FilterDualSelect() {
 

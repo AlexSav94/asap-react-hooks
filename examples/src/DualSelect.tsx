@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
-import { useSelect } from './hooks/useSelect';
-import useMultiple from './hooks/useSelect/useMultiple';
-import useDual, { UseDualInstance } from './hooks/useSelect/useDual';
+import React from 'react';
+import { useSelect, useMultiple, useDual, UseDualInstance } from 'asap-react-hooks';
 
 export default function DualSelect() {
 

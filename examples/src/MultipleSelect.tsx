@@ -1,14 +1,11 @@
-import React, { useEffect } from 'react';
-import { useSelect } from './hooks/useSelect';
-import useMultiple from './hooks/useSelect/useMultiple';
-import useFilter, { UseFilterInstance } from './hooks/useSelect/useFilter';
+import React from 'react';
+import { useSelect, useMultiple } from 'asap-react-hooks';
 
-export default function FilterSelect() {
+export default function MultipleSelect() {
 
   const {
     getSelectedValue,
     getOptions,
-    getInputProps,
     getRootProps,
     getListProps
   } = useSelect({
@@ -19,13 +16,12 @@ export default function FilterSelect() {
       { name: 'test4', value: 124 },
     ],
     onChange: (value) => window.alert(value),
-  }, useFilter, useMultiple, 
-  ) as UseFilterInstance;
+  }, useMultiple
+  );
 
   return (
     <div {...getRootProps()} className='select'>
-      <h2>Filter Selection</h2>
-      <input type='text' {...getInputProps()}/>
+      <h2>Multiple Selection</h2>
       <ul {...getListProps()}>
         {
           getOptions().map(optionInstance => {

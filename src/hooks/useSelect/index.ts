@@ -79,7 +79,7 @@ const defaultProps: UseSelectProps = {
   closeOnSelect: true
 }
 
-export const useSelect = (props: UseSelectProps, ...hooks: any) => {
+export function useSelect(props: UseSelectProps, ...hooks: any) {
 
   const {
     initialValue,

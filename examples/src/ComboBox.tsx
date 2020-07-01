@@ -1,7 +1,5 @@
 import React, { useRef } from 'react';
-import { useSelect } from './hooks/useSelect';
-import useDropdown, { UseDropdownInstance } from './hooks/useSelect/useDropdown';
-import useFilter, { UseFilterInstance } from './hooks/useSelect/useFilter';
+import { useSelect, useDropdown, useFilter, UseDropdownInstance, UseFilterInstance } from 'asap-react-hooks';
 
 export default function ComboBox() {
 
@@ -32,7 +30,7 @@ export default function ComboBox() {
     <div className='select'>
       <h2>ComboBox</h2>
       <div {...getRootProps()}>
-        <input type='text' value={selectedOption?.name} {...getInputProps()}/><button {...getButtonProps()}>&darr;</button>
+        <input type='text' value={selectedOption?.name} {...getInputProps()} /><button {...getButtonProps()}>&darr;</button>
         <ul {...getListProps()} style={isOpen ? { display: "block" } : { display: "none" }}>
           {
             getOptions().map(optionInstance => {

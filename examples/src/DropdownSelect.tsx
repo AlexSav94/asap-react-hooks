@@ -1,6 +1,5 @@
 import React from 'react';
-import { useSelect } from './hooks/useSelect';
-import useDropdown, { UseDropdownInstance } from './hooks/useSelect/useDropdown';
+import { useSelect, useDropdown, UseDropdownInstance } from 'asap-react-hooks';
 
 export default function DropdownSelect() {
 

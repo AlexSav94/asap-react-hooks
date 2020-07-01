@@ -29,7 +29,7 @@ function reducer(state: UseDropdownState, action: DropdownAction) {
   }
 }
 
-export default function useDropdown(instance: UseSelectInstance) {
+export function useDropdown(instance: UseSelectInstance) {
 
   instance.hooks.reducers = instance.hooks.reducers ? [...instance.hooks.reducers, reducer] : [reducer];
 

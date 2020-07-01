@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelect } from './hooks/useSelect';
-import useDropdown, { UseDropdownInstance } from './hooks/useSelect/useDropdown';
-import useFilter from './hooks/useSelect/useFilter';
+import { useSelect, useDropdown, UseDropdownInstance } from 'asap-react-hooks';
 
 function getFilteredOptions(filter: string) {
   const options = [

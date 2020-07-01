@@ -1,6 +1,6 @@
 import { UseSelectInstance } from ".";
 
-export default function useMultiple(instance: UseSelectInstance) {
+export function useMultiple(instance: UseSelectInstance) {
 
   instance.hooks.useInstance = instance.hooks.useInstance ? [...instance.hooks.useInstance, useInstance] : [useInstance];
 

@@ -4,7 +4,7 @@ export interface UseDualInstance extends UseSelectInstance {
   getSelectedOptions: () => OptionInstance[];
 }
 
-export default function useDual(instance: UseSelectInstance) {
+export function useDual(instance: UseSelectInstance) {
   instance.hooks.useInstance = instance.hooks.useInstance ? [...instance.hooks.useInstance, useInstance] : [useInstance];
 }
 

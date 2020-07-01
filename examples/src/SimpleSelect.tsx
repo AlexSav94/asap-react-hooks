@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelect } from './hooks/useSelect';
+import { useSelect } from 'asap-react-hooks';
 
 export default function SimpleSelect() {
 
