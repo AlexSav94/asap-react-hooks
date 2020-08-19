@@ -9,8 +9,8 @@ export interface UseDropdownInstance extends UseSelectInstance {
   isOpen: boolean;
   open: () => void;
   close: () => void;
-  getButtonProps: () => { onClick: () => void; };
-
+  getToggleProps: () => { onClick: () => void; };
+  getLabel: () => any
 }
 
 export type DropdownAction = Action
@@ -77,7 +77,7 @@ function useInstance(instance: UseDropdownInstance) {
     return getOptions().map(optionInstance => {
       const optionProps = optionInstance.getOptionProps();
       optionInstance.getOptionProps = () => {
-        let option = optionInstance.option
+        const option = optionInstance.option
         return {
           key: `${props.getOptionValue ? props.getOptionValue(option) : option.value}`,
           role: 'option',
@@ -95,11 +95,24 @@ function useInstance(instance: UseDropdownInstance) {
     });
   }
 
-  instance.getButtonProps = () => ({
+  instance.getToggleProps = () => ({
     onClick: () => {
       toggle();
     }
-  });;
+  });
+
+  instance.getLabel = () => {
+    const {
+      state,
+      props
+    } = instance;
+    if (state?.value) {
+      const currentOption = props.options.find(option => props.getOptionValue ? props.getOptionValue(option) === state.value : option.value === state.value);
+      return props.getOptionName ? props.getOptionName(currentOption) : currentOption.name;
+    } else {
+      return null;
+    }
+  }
 
   const getRootProps = () => {
 
@@ -110,10 +123,18 @@ function useInstance(instance: UseDropdownInstance) {
 
     return {
       tabIndex: 1,
-      onBlur: (e: React.FocusEvent<any>) => {
-        if ((state as unknown as UseDropdownState).isOpen && e.relatedTarget === null) {
+      onBlur: ({relatedTarget, currentTarget}: React.FocusEvent<any>) => {
+        if (!(state as UseDropdownState).isOpen) return;
+        if (relatedTarget === null) {
           close();
+          return;
         }
+        let node = relatedTarget;
+        while (node !== null) {
+          if (node === currentTarget) return;
+          node = (node as any).parentNode
+        }
+        close();
       }
     }
   }

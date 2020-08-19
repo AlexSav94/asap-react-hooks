@@ -1,4 +1,9 @@
-import { UseSelectInstance } from ".";
+import { UseSelectInstance, equals } from ".";
+
+export interface UseMultipleInstance extends UseSelectInstance {
+  isSelectedAll: () => boolean;
+  selectAll: () => void;
+}
 
 export function useMultiple(instance: UseSelectInstance) {
 
@@ -6,72 +11,37 @@ export function useMultiple(instance: UseSelectInstance) {
 
 }
 
-function useInstance(instance: UseSelectInstance) {
+function useInstance(instance: UseMultipleInstance) {
 
-  const getSelectedOption = (): Array<any>  => {
-    const {
-      state
-    } = instance;
-
-    if (state?.value) {
-      return state.value
-    } else {
-      return [];
-    }
-  };
-
-  const getValue = (): Array<any> => {
-    const {
-      state,
-      props
-    } = instance;
-
-    if (state?.value) {
-      return state.value.map((option: any) => {
-        if (props.getOptionValue) {
-          return props.getOptionValue(option)
-        } else {
-          return option.value;
-        }
-      })
-    } else {
-      return [];
-    }
-  }
-
-  instance.selectOption = (value) => {
+  const selectOption = (value: any) => {
 
     const {
       dispatch,
-      props
+      props,
+      state
     } = instance;
 
     if (Array.isArray(value)) {
       if (dispatch) dispatch({ type: 'select', value: [...value] });
+      if (instance.props.onChange) {
+        instance.props.onChange(value);
+      }
     } else if (value) {
       let newSelected;
-      let optionValue = props.getOptionValue ? props.getOptionValue(value) : (value).value;
-      let values = getValue();
-      let options = getSelectedOption();
+      const optionValue = props.getOptionValue ? props.getOptionValue(value) : (value).value;
+      const values = state?.value;
       if (values && values.includes(optionValue)) {
-        newSelected = options.slice();
-        newSelected.splice(values.indexOf(optionValue), 1);
+        newSelected = values.filter((item: any) => item !== optionValue)
       } else {
-        if (options) {
-          newSelected = [...options, value]
+        if (values) {
+          newSelected = [...values, optionValue]
         } else {
-          newSelected = [value];
+          newSelected = [optionValue];
         }
       }
       if (dispatch) dispatch({ type: 'select', value: newSelected });
       if (props.onChange) {
-        props.onChange(newSelected.map((option: any) => {
-          if (props.getOptionValue) {
-            return props.getOptionValue(option)
-          } else {
-            return option.value
-          }
-        }));
+        props.onChange(newSelected);
       } else {
         if (dispatch) dispatch({ type: 'select', value: [] });
         if (instance.props.onChange) {
@@ -82,7 +52,14 @@ function useInstance(instance: UseSelectInstance) {
 
   }
 
-  instance.getSelectedValue = () => getValue();
+  instance.selectOption = selectOption;
 
-  instance.getSelectedOption = () => getSelectedOption();
+  instance.selectAll = () => selectOption(instance.props.options);
+
+  instance.isSelectedAll = () => {
+    const {
+      state
+    } = instance;
+    return equals(instance.props.options.map(option => instance.props.getOptionValue ? instance.props.getOptionValue(option) : option.value), state?.value);
+  }
 }

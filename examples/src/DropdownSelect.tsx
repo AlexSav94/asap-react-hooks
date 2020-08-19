@@ -5,11 +5,10 @@ export default function DropdownSelect() {
 
   const {
     getSelectedValue,
-    getSelectedOption,
     isOpen,
-    close,
     getOptions,
-    getButtonProps,
+    getLabel,
+    getToggleProps,
     getRootProps,
     getListProps
   } = useSelect({
@@ -21,11 +20,11 @@ export default function DropdownSelect() {
     ],
     onChange: (value) => window.alert(value)
   }, useDropdown) as UseDropdownInstance;
-
+  
   return (
     <div {...getRootProps()} className='select'>
       <h2>Dropdown Selection</h2>
-      <span>Choose option: {getSelectedOption()?.name} <button {...getButtonProps()}>Open</button></span>
+      <span {...getToggleProps()}>Choose option:  {getLabel()}</span>
       <ul {...getListProps()} style={isOpen ? { display: "block" } : { display: "none" }}>
         {
           getOptions().map(optionInstance => {

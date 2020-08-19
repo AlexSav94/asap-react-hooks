@@ -3,6 +3,10 @@ import { useSelect } from 'asap-react-hooks';
 
 export default function SimpleSelect() {
 
+  
+  const getOptionName = (option: any) => option?.label;
+  const getOptionValue = (option: any) => option?.number;
+
   const {
     getSelectedValue,
     getOptions,
@@ -10,14 +14,15 @@ export default function SimpleSelect() {
     getListProps
   } = useSelect({
     options: [
-      { name: 'test', value: 123 },
-      { name: 'test2', value: 121 },
-      { name: 'test3', value: 122 },
-      { name: 'test4', value: 124 },
+      { label: 'test', number: 123 },
+      { label: 'test2', number: 121 },
+      { label: 'test3', number: 122 },
+      { label: 'test4', number: 124 },
     ],
-    onChange: (value) => window.alert(value),
-  }
-  );
+    getOptionName,
+    getOptionValue,
+    onChange: (value) => window.alert(value)
+  });
 
   return (
     <div {...getRootProps()}  className='select'>
@@ -25,10 +30,10 @@ export default function SimpleSelect() {
       <ul {...getListProps()}>
         {
           getOptions().map(optionInstance => {
-            if (getSelectedValue() === optionInstance.option.value) {
-              return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{optionInstance.option.name}</span></li>
+            if (getSelectedValue() === getOptionValue(optionInstance.option)) {
+              return <li {...optionInstance.getOptionProps()}><span style={{ backgroundColor: 'lightblue' }}>{getOptionName(optionInstance.option)}</span></li>
             } else {
-              return <li {...optionInstance.getOptionProps()}><span>{optionInstance.option.name}</span></li>
+              return <li {...optionInstance.getOptionProps()}><span>{getOptionName(optionInstance.option)}</span></li>
             }
           })
         }

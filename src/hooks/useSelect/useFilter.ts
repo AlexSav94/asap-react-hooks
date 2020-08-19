@@ -8,7 +8,9 @@ export type UseFilterAction = Action
 | {type: 'filter', filter: string}
 
 export interface InputProps {
-
+  autoComplete: string,
+  value?: string;
+  onChange: (e: React.ChangeEvent<any>) => void;
 }
 
 export interface UseFilterInstance extends UseSelectInstance {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelect, useMultiple, useFilter, UseFilterInstance } from 'asap-react-hooks';
+import { useSelect, useFilter, useMultiple, UseFilterInstance } from 'asap-react-hooks';
 
 export default function FilterSelect() {
 

@@ -19,12 +19,12 @@ export default function ComboBoxCustomFilter() {
 
   const {
     getSelectedValue,
-    getSelectedOption,
+    getLabel,
     isOpen,
     open,
     selectOption,
     getOptions,
-    getButtonProps,
+    getToggleProps,
     getRootProps,
     getListProps
   } = useSelect({
@@ -33,7 +33,7 @@ export default function ComboBoxCustomFilter() {
   }, useDropdown) as UseDropdownInstance;
 
   const selectedValue = getSelectedValue();
-  const selectedOption = getSelectedOption();
+  const label = getLabel();
 
   useEffect(() => {
     getFilteredOptions(filter).then(options => {
@@ -42,10 +42,11 @@ export default function ComboBoxCustomFilter() {
   }, [filter])
 
   useEffect(() => {
-    if (selectedOption) {
+    if (label) {
       setFilter('');
     }
-  }, [selectedOption])
+  }, [label])
+
 
   return (
     <div className='select'>
@@ -55,7 +56,7 @@ export default function ComboBoxCustomFilter() {
         <input type='text' onFocus={open} onChange={e => {
           selectOption(undefined);
           setFilter(e.target.value)
-        }} value={selectedOption ? selectedOption.name : filter}/><button {...getButtonProps()}>&darr;</button>
+        }} value={label ? label : filter}/><button {...getToggleProps()}>&darr;</button>
         <ul {...getListProps()} style={isOpen ? { display: "block" } : { display: "none" }}>
           {
             getOptions().map(optionInstance => {

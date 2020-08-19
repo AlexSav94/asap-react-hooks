@@ -5,11 +5,11 @@ export default function ComboBox() {
 
   const {
     getSelectedValue,
-    getSelectedOption,
+    getLabel,
     isOpen,
     getOptions,
     getInputProps,
-    getButtonProps,
+    getToggleProps,
     getRootProps,
     getListProps
   } = useSelect({
@@ -24,13 +24,12 @@ export default function ComboBox() {
   }, useDropdown, useFilter) as UseDropdownInstance & UseFilterInstance;
 
   const selectedValue = getSelectedValue();
-  const selectedOption = getSelectedOption();
-
+  
   return (
     <div className='select'>
       <h2>ComboBox</h2>
       <div {...getRootProps()}>
-        <input type='text' value={selectedOption?.name} {...getInputProps()} /><button {...getButtonProps()}>&darr;</button>
+        <input type='text' {...(selectedValue ? {...getInputProps(), value: getLabel()} : {...getInputProps()})} /><button {...getToggleProps()}>&darr;</button>
         <ul {...getListProps()} style={isOpen ? { display: "block" } : { display: "none" }}>
           {
             getOptions().map(optionInstance => {
